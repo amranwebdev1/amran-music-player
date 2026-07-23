@@ -59,7 +59,7 @@ find /sdcard/snaptube /sdcard/Download /sdcard/Music -type f \( -iname "*.mp3" -
 CMD_ALL="while IFS= read -r line; do [ -n \"\$line\" ] && (grep -q -F -x \"\$line\" \"$FAV_LIST\" && echo \"⭐ \$(basename \"\$line\")\" || echo \"🎵 \$(basename \"\$line\")\"); done < \"$PLAYLIST\""
 CMD_FAV="while IFS= read -r line; do [ -n \"\$line\" ] && echo \"⭐ \$(basename \"\$line\")\"; done < \"$FAV_LIST\""
 
-HEADER="🎧 Amran Music Player  │ [ Ctrl+H: Help ]"
+HEADER="🎧 Amran Music Player  │ 📖 [ Ctrl+H: Help ]"
 
 HELP_TEXT="📖 SHORTCUTS & CONTROLS HELP
 ─────────────────────────────────────────
