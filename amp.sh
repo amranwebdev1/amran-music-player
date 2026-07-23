@@ -39,8 +39,10 @@ find /sdcard/snaptube /sdcard/Download /sdcard/Music -type f \( -iname "*.mp3" -
 CMD_ALL="while IFS= read -r line; do [ -n \"\$line\" ] && (grep -q -F -x \"\$line\" \"$FAV_LIST\" && echo \"⭐ \$(basename \"\$line\")\" || echo \"🎵 \$(basename \"\$line\")\"); done < \"$PLAYLIST\""
 CMD_FAV="while IFS= read -r line; do [ -n \"\$line\" ] && echo \"⭐ \$(basename \"\$line\")\"; done < \"$FAV_LIST\""
 
+HEADER="🎧 Amran Music Player  │ [ Ctrl+H: Help ]"
+
 HELP_TEXT="📖 SHORTCUTS & CONTROLS HELP
-─────────────────────────────────────
+─────────────────────────────────────────
 🎵 MENU SHORTCUTS:
    Ctrl+A : View All Songs
    Ctrl+B : View Favorites List
@@ -59,22 +61,12 @@ HELP_TEXT="📖 SHORTCUTS & CONTROLS HELP
 
 while true; do
     clear
-    
-    term_width=$(tput cols 2>/dev/null || echo 40)
-    title="🎧 Amran Music Player"
-    title_len=${#title}
-    pad=$(( (term_width - title_len) / 2 ))
-    [ $pad -lt 0 ] && pad=0
-    
-    # সবার উপরে কাস্টম হেডার ব্যানার
-    echo -e "\033[1;36m───────────────────────────────────────────\033[0m"
-    printf "%*s\033[1;32;40m%s\033[0m\n" $pad "" "$title"
-    echo -e "\033[1;36m───────────────────────────────────────────\033[0m"
 
-    selected=$(eval "$CMD_ALL" | fzf -m --height=85% --layout=reverse --wrap \
+    # preview-window-এর রিজার্ভ স্পেস তুলে দিয়ে পুরো স্ক্রিন বক্স বড় করা হয়েছে
+    selected=$(eval "$CMD_ALL" | fzf -m --height=100% --layout=reverse --wrap \
         --color="fg+:green,pointer:green,hl:yellow,marker:magenta:bold,header:cyan:bold,border:blue" \
         --border="rounded" \
-        --header="📊 [ Ctrl+H: Help ]" \
+        --header="$HEADER" \
         --preview="echo \"$HELP_TEXT\"" \
         --preview-window="down:50%:hidden:wrap" \
         --bind "ctrl-a:reload($CMD_ALL)" \
