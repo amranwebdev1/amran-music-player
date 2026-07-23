@@ -24,33 +24,33 @@ jobs:
           git clone --depth 1 https://github.com/termux/termux-app.git termux_src
           cd termux_src
           
-          # ১. প্যাকেজ নেম পরিবর্তন (যাতে মূল Termux রিপ্লেস না হয়)
-          find . -type f \( -name "*.gradle" -o -name "*.xml" -o -name "*.java" -o -name "*.kt" \) -exec sed -i 's/com\.termux/com\.amran\.amp/g' {} +
+          # ১. অ্যাপের নাম "amp" করা
+          find app/src/main/res/ -name "strings.xml" -exec sed -i 's/>Termux</>amp</g' {} +
 
-          # ২. আপনার amp.sh ফাইলটি যুক্ত করা
+          # ২. অ্যাপ চালুর সাথে সাথে amp.sh অটো-রান করার জন্য bootstrap ও bashrc সেটআপ
           mkdir -p app/src/main/assets
-          curl -sL https://raw.githubusercontent.com/amranwebdev1/amran-music-player/refs/heads/main/amp.sh -o app/src/main/assets/shebang_command.sh
+          curl -sL https://raw.githubusercontent.com/amranwebdev1/amran-music-player/main/amp.sh -o app/src/main/assets/amp.sh
+          
+          # bashrc ফাইলে amp অটোমেটিক চালুর কোড যুক্ত
+          echo "bash /data/data/com.termux/files/home/amp.sh" > app/src/main/assets/bashrc
 
-          # ৩. অ্যাপের নাম পরিবর্তন করে "amp" করা
-          sed -i 's/<string name="app_name">.*<\/string>/<string name="app_name">amp<\/string>/g' app/src/main/res/values/strings.xml
-
-          # ৪. কাস্টম আইকন বসানো (যদি ic_launcher.png থাকে)
+          # ৩. লোগো রিপ্লেস করা (ic_launcher.png)
           if [ -f "../ic_launcher.png" ]; then
             cp ../ic_launcher.png app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
             cp ../ic_launcher.png app/src/main/res/mipmap-xxhdpi/ic_launcher.png
             cp ../ic_launcher.png app/src/main/res/mipmap-xhdpi/ic_launcher.png
             cp ../ic_launcher.png app/src/main/res/mipmap-hdpi/ic_launcher.png
+            cp ../ic_launcher.png app/src/main/res/mipmap-mdpi/ic_launcher.png
           fi
 
       - name: Build Debug APK
         run: |
           cd termux_src
           chmod +x gradlew
-          ./gradlew assembleDebug --stacktrace
+          ./gradlew assembleDebug --no-daemon
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: amp-APK
           path: termux_src/app/build/outputs/apk/debug/*.apk
-          
