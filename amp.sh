@@ -1,33 +1,5 @@
 #!/bin/bash
 
-# ==========================================
-# 🔄 নির্ভরযোগ্য অটো-আপডেট সিস্টেম
-# ==========================================
-SCRIPT_PATH="$PREFIX/bin/amp"
-REPO_URL="https://raw.githubusercontent.com/amranwebdev1/amran-music-player/main/amp.sh"
-
-# ২ সেকেন্ড টাইমআউট দিয়ে গিটহাব থেকে নতুন ভার্সন চেক করবে
-TMP_FILE=$(mktemp)
-if curl -s --connect-timeout 3 "$REPO_URL?v=$(date +%s)" -o "$TMP_FILE"; then
-    # ফাইল সফলভাবে ডাউনলোড হলে এবং সাইজ ০ এর বেশি হলে আপডেট করে দেবে
-    if [ -s "$TMP_FILE" ]; then
-        mv "$TMP_FILE" "$SCRIPT_PATH"
-        chmod +x "$SCRIPT_PATH"
-    else
-        rm -f "$TMP_FILE"
-    fi
-else
-    rm -f "$TMP_FILE"
-fi
-
-# ==========================================
-# 🎵 আপনার আসল মিউজিক প্লেয়ারের কোড নিচে থাকবে
-# ==========================================
-clear
-echo "Welcome to Amran Music Player!"
-# ... আপনার বাকী প্লেয়ারের কোড ...
-
-
 echo -e "\033[1;32m⌛ Installing dependencies (mpv, fzf, figlet)...\033[0m"
 pkg update -y && pkg install mpv fzf figlet -y
 
