@@ -1,23 +1,31 @@
 #!/bin/bash
 
 # ==========================================
-# 🔄 স্মার্ট অটো-আপডেট সিস্টেম
+# 🔄 নির্ভরযোগ্য অটো-আপডেট সিস্টেম
 # ==========================================
-# ১. চেক করবে ইন্টারনেট কানেকশন আছে কি না
-if ping -c 1 raw.githubusercontent.com &> /dev/null; then
-    echo "🌐 Checking for updates..."
-    
-    # ২. নেটে কানেক্টেড থাকলে ব্যাকগ্রাউন্ডে শান্তভাবে লেটেস্ট ফাইল নামিয়ে ওভাররাইট করবে
-    curl -sL https://raw.githubusercontent.com/amranwebdev1/amran-music-player/refs/heads/main/amp.sh -o $PREFIX/bin/amp
-    chmod +x $PREFIX/bin/amp
+SCRIPT_PATH="$PREFIX/bin/amp"
+REPO_URL="https://raw.githubusercontent.com/amranwebdev1/amran-music-player/main/amp.sh"
+
+# ২ সেকেন্ড টাইমআউট দিয়ে গিটহাব থেকে নতুন ভার্সন চেক করবে
+TMP_FILE=$(mktemp)
+if curl -s --connect-timeout 3 "$REPO_URL?v=$(date +%s)" -o "$TMP_FILE"; then
+    # ফাইল সফলভাবে ডাউনলোড হলে এবং সাইজ ০ এর বেশি হলে আপডেট করে দেবে
+    if [ -s "$TMP_FILE" ]; then
+        mv "$TMP_FILE" "$SCRIPT_PATH"
+        chmod +x "$SCRIPT_PATH"
+    else
+        rm -f "$TMP_FILE"
+    fi
+else
+    rm -f "$TMP_FILE"
 fi
 
 # ==========================================
-# 🎵 আপনার আসল মিউজিক প্লেয়ারের কোড (নিচে থাকবে)
+# 🎵 আপনার আসল মিউজিক প্লেয়ারের কোড নিচে থাকবে
 # ==========================================
 clear
 echo "Welcome to Amran Music Player!"
-# ... আপনার বাকী প্লেয়ারের কোড এখানে থাকবে ...
+# ... আপনার বাকী প্লেয়ারের কোড ...
 
 
 echo -e "\033[1;32m⌛ Installing dependencies (mpv, fzf, figlet)...\033[0m"
