@@ -24,14 +24,17 @@ jobs:
           git clone --depth 1 https://github.com/termux/termux-app.git termux_src
           cd termux_src
           
-          # ১. আপনার amp.sh ফাইলটি যুক্ত করা
+          # ১. প্যাকেজ নেম পরিবর্তন (যাতে মূল Termux রিপ্লেস না হয়)
+          find . -type f \( -name "*.gradle" -o -name "*.xml" -o -name "*.java" -o -name "*.kt" \) -exec sed -i 's/com\.termux/com\.amran\.amp/g' {} +
+
+          # ২. আপনার amp.sh ফাইলটি যুক্ত করা
           mkdir -p app/src/main/assets
           curl -sL https://raw.githubusercontent.com/amranwebdev1/amran-music-player/refs/heads/main/amp.sh -o app/src/main/assets/shebang_command.sh
 
-          # ২. অ্যাপের নাম পরিবর্তন করে "amp" করা
+          # ৩. অ্যাপের নাম পরিবর্তন করে "amp" করা
           sed -i 's/<string name="app_name">.*<\/string>/<string name="app_name">amp<\/string>/g' app/src/main/res/values/strings.xml
 
-          # ৩. কাস্টম আইকন বসানো (যদি ic_launcher.png থাকে)
+          # ৪. কাস্টম আইকন বসানো (যদি ic_launcher.png থাকে)
           if [ -f "../ic_launcher.png" ]; then
             cp ../ic_launcher.png app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
             cp ../ic_launcher.png app/src/main/res/mipmap-xxhdpi/ic_launcher.png
@@ -50,4 +53,3 @@ jobs:
         with:
           name: amp-APK
           path: termux_src/app/build/outputs/apk/debug/*.apk
-          
