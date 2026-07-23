@@ -1,1 +1,52 @@
+name: Build Amran Music Player APK
 
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Clone Termux-App and Customize
+        run: |
+          git clone https://github.com/termux/termux-app.git termux_src
+          
+          # ১. আপনার amp.sh ফাইলটি যুক্ত করা
+          mkdir -p termux_src/app/src/main/assets
+          curl -sL https://raw.githubusercontent.com/amranwebdev1/amran-music-player/refs/heads/main/amp.sh -o termux_src/app/src/main/assets/shebang_command.sh
+
+          # ২. অ্যাপের নাম পরিবর্তন করে "amp" করা
+          sed -i 's/<string name="app_name">.*<\/string>/<string name="app_name">amp<\/string>/g' termux_src/app/src/main/res/values/strings.xml
+
+          # ৩. আপনার আপলোড করা কাস্টম আইকনটি বসানো (যদি ic_launcher.png নামে রিপোজিটরিতে রাখেন)
+          if [ -f "ic_launcher.png" ]; then
+            cp ic_launcher.png termux_src/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+            cp ic_launcher.png termux_src/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+            cp ic_launcher.png termux_src/app/src/main/res/mipmap-xhdpi/ic_launcher.png
+            cp ic_launcher.png termux_src/app/src/main/res/mipmap-hdpi/ic_launcher.png
+          fi
+
+      - name: Build Debug APK
+        run: |
+          cd termux_src
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: amp-APK
+          path: termux_src/app/build/outputs/apk/debug/*.apk
+          
