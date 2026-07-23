@@ -1,5 +1,25 @@
 #!/bin/bash
 
+# ==========================================
+# 🔄 স্মার্ট অটো-আপডেট সিস্টেম
+# ==========================================
+# ১. চেক করবে ইন্টারনেট কানেকশন আছে কি না
+if ping -c 1 raw.githubusercontent.com &> /dev/null; then
+    echo "🌐 Checking for updates..."
+    
+    # ২. নেটে কানেক্টেড থাকলে ব্যাকগ্রাউন্ডে শান্তভাবে লেটেস্ট ফাইল নামিয়ে ওভাররাইট করবে
+    curl -sL https://raw.githubusercontent.com/amranwebdev1/amran-music-player/refs/heads/main/amp.sh -o $PREFIX/bin/amp
+    chmod +x $PREFIX/bin/amp
+fi
+
+# ==========================================
+# 🎵 আপনার আসল মিউজিক প্লেয়ারের কোড (নিচে থাকবে)
+# ==========================================
+clear
+echo "Welcome to Amran Music Player!"
+# ... আপনার বাকী প্লেয়ারের কোড এখানে থাকবে ...
+
+
 echo -e "\033[1;32m⌛ Installing dependencies (mpv, fzf, figlet)...\033[0m"
 pkg update -y && pkg install mpv fzf figlet -y
 
